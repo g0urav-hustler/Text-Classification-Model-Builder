@@ -1,0 +1,30 @@
+# virtual environment
+tc_env
+env
+
+
+# pycache
+__pycache__
+
+# temporary file
+temp.py
+
+
+# artifacts
+artifacts
+
+# logs
+logs
+
+# uploaded_files
+web_files
+
+# data
+data
+
+# for personal 
+notes.txt
+
+#zip files
+*.zip
+
