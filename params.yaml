@@ -1,0 +1,7 @@
+data_processing:
+  text_col: text
+  label_col: labels
+  train_data_size: 0.7
+  val_data_size: 0.1
+  test_data_size: 0.2
+
