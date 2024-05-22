@@ -1,0 +1,21 @@
+artifacts_root: artifacts
+
+data_ingestion:
+  raw_data_dir: artifacts/raw_data
+  web_data_dir: web_files
+
+data_processing:
+  raw_data_dir: artifacts/raw_data
+  processed_data_dir: artifacts/processed_data
+  split_data_dir: artifacts/split_data
+
+train_model:
+  train_data_path: artifacts/split_data/train_data.csv
+  val_data_path : artifacts/split_data/val_data.csv 
+  save_model_dir: artifacts/models
+
+evaluate_model:
+  save_model_dir: artifacts/models
+  test_data_path: artifacts/split_data/test_data.csv
+
+
