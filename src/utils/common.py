@@ -1,4 +1,4 @@
-from src.BERT import logger
+from src import logger
 from pathlib import Path
 from box import ConfigBox
 from box.exceptions import BoxValueError
