@@ -21,3 +21,15 @@ class DataProcessingConfig:
     train_data_size: float
     test_data_size: float
     val_data_size: float
+
+@dataclass(frozen= True)
+class TrainModelConfig:
+    train_data_path: Path 
+    val_data_path: Path
+    save_model_dir: Path
+    
+    model_name : str
+    num_labels : int
+    epochs : int
+    train_batch_size : int
+    val_batch_size : int
