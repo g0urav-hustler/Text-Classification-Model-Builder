@@ -1,7 +1,11 @@
 data_processing:
   text_col: text
-  label_col: labels
+  label_col: category
   train_data_size: 0.7
   val_data_size: 0.1
   test_data_size: 0.2
+
+
+train_model:
+  model_name: bert-base-uncased
 
