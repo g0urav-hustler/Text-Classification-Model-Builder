@@ -2,7 +2,8 @@ import os
 from src.constants import *
 from src.utils.common import read_yaml, create_directories
 from src.entity.config_entity import (DataIngestionConfig,
-                                      DataProcessingConfig)
+                                      DataProcessingConfig,
+                                      TrainModelConfig)
 
 
 class ConfigurationManager:
@@ -55,3 +56,25 @@ class ConfigurationManager:
         )
 
         return data_processing_config
+    
+    def get_train_model_config(self) -> TrainModelConfig:
+
+        num_labels = self.params.num_labels
+        config = self.config.train_model
+        params = self.params.model_params
+        
+        create_directories([config.saved_model_dir])
+
+        train_model_config = TrainModelConfig(
+            train_data_path= config.train_data_path,
+            val_data_path= config.val_data_path,
+            save_model_dir= config.saved_model_dir,
+
+            model_name = params.model_name,
+            num_labels = num_labels,
+            epochs = params.epochs,
+            train_batch_size = params.train_batch_size,
+            val_batch_size = params.val_batch_size
+        )
+
+        return train_model_config
