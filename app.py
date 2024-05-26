@@ -6,6 +6,9 @@ import yaml
 import pandas as pd
 from main import InvokePipeline
 from transformers import AutoModelForSequenceClassification
+from src.pipeline.stage_01_data_ingestion import DataIngestionPipeline
+from src.pipeline.stage_02_data_processing import DataProcessingPipeline
+from src.pipeline.stage_03_train_model import TrainModelPipeline
 
 
 
@@ -14,7 +17,6 @@ def load_model(model_type, model_path):
     model = AutoModelForSequenceClassification(model_name= model_path,)
     
     return model
-
 
 
 def compressing_model(model_path, zip_file_name):
@@ -39,7 +41,7 @@ uploaded_file = st.file_uploader("Upload your data set file in csv format")
 
 if uploaded_file is not None:
 
-    df = pd.read_csv(uploaded_file, index_col= 0)
+    df = pd.read_csv(uploaded_file)
 
     df_columns = list(df.columns)
     
@@ -53,11 +55,11 @@ if uploaded_file is not None:
         
         # context
         with col1:
-            text_column = st.selectbox(label = "Select the context column", options= df_columns)
+            text_column = st.selectbox(label = "Select the text column", options= df_columns)
 
         # question column input
         with col2:
-            label_column = st.selectbox(label = "Select the question column", options= df_columns)
+            label_column = st.selectbox(label = "Select the labels column", options= df_columns)
 
         train_data_range = list(range(10,100,10))
         data_size_col1, data_size_col2, data_size_col3 = st.columns(3)
@@ -85,7 +87,7 @@ if uploaded_file is not None:
 
         # model type input
         with par_col1:
-            model_type = st.selectbox(label="Enter the model ", options= model_options)
+            model_type = st.selectbox(label="Select model name ", options= model_options)
 
         # epochs input
         with par_col2:
@@ -162,6 +164,7 @@ if uploaded_file is not None:
 
 
         folder = 'web_files'
+        os.makedirs(folder, exist_ok=True)
         file_path = os.path.join(folder, "data_file.csv")
         with open(file_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
@@ -176,16 +179,16 @@ if uploaded_file is not None:
         if train_button and not submitted:
             with st.status("Training Status", expanded=True) as status:
                 st.write("Data Loading.")
+                obj = DataIngestionPipeline()
+                obj.main()
                 time.sleep(3)
                 st.write("Data Preprocessing")
+                obj = DataProcessingPipeline()
+                obj.main()
                 time.sleep(2)
                 st.write("Training model..")
                 time.sleep(5)
-                pipline_object = InvokePipeline()
-                model_result = pipline_object.main()
-
-                shutil.copytree("/home/gourav/ML/QA_Models_Builder/logs/bert", os.path.join("artifacts","models", model_type))
-                compressing_model(os.path.join("artifacts","models",model_type), model_type)
+            
                 status.update(label="Model Trained Succesfully", state="complete", expanded=False)
  
             st.success('Done!')
