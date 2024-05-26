@@ -4,7 +4,7 @@ from src import logger
 
 STAGE_NAME = "Model Training Stage"
 
-class DataProcessingPipeline:
+class TrainModelPipeline:
     def __init__(self):
         pass
 
