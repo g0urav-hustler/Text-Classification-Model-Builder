@@ -182,7 +182,7 @@ if uploaded_file is not None:
                 obj = DataIngestionPipeline()
                 obj.main()
                 time.sleep(3)
-                st.write("Data Preprocessing")
+                st.write("Data Processing")
                 obj = DataProcessingPipeline()
                 obj.main()
                 time.sleep(2)
