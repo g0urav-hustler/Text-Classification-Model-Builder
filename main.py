@@ -34,13 +34,12 @@ class InvokePipeline:
             raise e
         
         
-        # STAGE_NAME = "Train Model Stage"
+        # STAGE_NAME = "Model Training Stage"
 
         # try:
         #     logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
         #     obj = TrainModelPipeline()
         #     evaluation_metric = obj.main()
-        #     return evaluation_metric
         #     logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
         # except Exception as e:
         #     logger.exception(e)
