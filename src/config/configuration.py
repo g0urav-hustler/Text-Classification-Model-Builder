@@ -35,7 +35,7 @@ class ConfigurationManager:
 
         config = self.config.data_processing
         params = self.params.data_processing
-        model_name = self.params.train_model.model_name
+        model_name = self.params.model_params.model_name
 
         create_directories([config.processed_data_dir, config.split_data_dir])
 
