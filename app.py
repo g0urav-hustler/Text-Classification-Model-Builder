@@ -4,7 +4,7 @@ import os
 import time
 import yaml
 import pandas as pd
-from main import InvokePipeline
+from transformers import AutoTokenizer
 from transformers import AutoModelForSequenceClassification
 from src.pipeline.stage_01_data_ingestion import DataIngestionPipeline
 from src.pipeline.stage_02_data_processing import DataProcessingPipeline
@@ -12,10 +12,15 @@ from src.pipeline.stage_03_train_model import TrainModelPipeline
 
 
 
+@st.cache_resource(show_spinner="Loading model tokenizer...")
+def load_tokenizer( model_path):
+    tokenizer = AutoTokenizer.from_pretrained(model_name= model_path,)
+    return tokenizer
+
+
 @st.cache_resource(show_spinner="Loading model for testing..")
-def load_model(model_type, model_path):
-    model = AutoModelForSequenceClassification(model_name= model_path,)
-    
+def load_model( model_path):
+    model = AutoModelForSequenceClassification.from_pretrained(model_name= model_path,)
     return model
 
 
@@ -162,7 +167,6 @@ if uploaded_file is not None:
 
         }
 
-
         folder = 'web_files'
         os.makedirs(folder, exist_ok=True)
         file_path = os.path.join(folder, "data_file.csv")
@@ -188,7 +192,6 @@ if uploaded_file is not None:
                 time.sleep(2)
                 st.write("Training model..")
                 time.sleep(5)
-            
                 status.update(label="Model Trained Succesfully", state="complete", expanded=False)
  
             st.success('Done!')
@@ -211,13 +214,14 @@ if uploaded_file is not None:
 
         st.write("Try Trained Model Output")
 
-        model = load_model(model_type, os.path.join("artifacts","models",model_type))
+        tokenizer = load_tokenizer(os.path.join("artifacts","models",model_type))
+        model = load_model(os.path.join("artifacts","models",model_type))
 
-        title = st.text_input("Try any question ",None, placeholder= "Write question here..")
+        title = st.text_input("Try any sentence.. ",None, placeholder= "Write text here..")
         if title:
-            st.write("Answer:")
+            st.write("Prediction")
             answer = model.predict()
-            st.write("The current movie title is", title)
+            st.write("The prediction is .", answer)
 
 
         with open(f"{model_type}.zip", "rb") as fp:
