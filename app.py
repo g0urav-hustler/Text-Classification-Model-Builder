@@ -88,11 +88,9 @@ if uploaded_file is not None:
         
         par_col1, par_col2, par_col3, par_col4 = st.columns(4)
 
-        model_options = ["bert", "roberta", "distilbert", "distilroberta", "electra-base", "electra-small", "xlnet"]
-
         # model type input
         with par_col1:
-            model_type = st.selectbox(label="Select model name ", options= model_options)
+            model_name = st.text_input(label="Enter model name ", value = None)
 
         # epochs input
         with par_col2:
@@ -109,32 +107,6 @@ if uploaded_file is not None:
         sb_col1, sb_col2, sb_col3, sb_col4, sb_col5 = st.columns(5)
         with sb_col3:
             submitted = st.form_submit_button(label = "Submit Parameters")
-
-    
-    model_name = None
-    if model_type == "bert":
-        model_name = "bert-base-cased"
-
-    elif model_type == "roberta":
-        model_name = "roberta-base"
-
-    elif model_type == "distilbert":
-        model_name = "distilbert-base-cased"
-
-    elif model_type == "distilroberta":
-        model_type = "roberta"
-        model_name = "distilroberta-base"
-
-    elif model_type == "electra-base":
-        model_type = "electra"
-        model_name = "google/electra-base-discriminator"
-
-    elif model_type == "electra-small":
-        model_type = "electra"
-        model_name = "google/electra-small-discriminator"
-
-    elif model_type == "xlnet":
-        model_name = "xlnet-base-cased"
 
 
     if submitted:
@@ -197,7 +169,7 @@ if uploaded_file is not None:
             st.success('Done!')
 
         
-    if os.path.isdir(os.path.join("artifacts","models",model_type)):
+    if os.path.isdir(os.path.join("artifacts","models",model_name)):
 
         if model_result != None:
 
@@ -214,8 +186,8 @@ if uploaded_file is not None:
 
         st.write("Try Trained Model Output")
 
-        tokenizer = load_tokenizer(os.path.join("artifacts","models",model_type))
-        model = load_model(os.path.join("artifacts","models",model_type))
+        tokenizer = load_tokenizer(os.path.join("artifacts","models",model_name, "tokenizer"))
+        model = load_model(os.path.join("artifacts","models",model_name, "model"))
 
         title = st.text_input("Try any sentence.. ",None, placeholder= "Write text here..")
         if title:
