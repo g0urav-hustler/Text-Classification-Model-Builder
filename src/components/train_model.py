@@ -68,5 +68,7 @@ class TrainModel:
 
         # model training
         trainer.train()
+
+        trainer.save_model(self.config.save_model_path)
         
 
