@@ -36,6 +36,8 @@ class ConfigurationManager:
         config = self.config.data_processing
         params = self.params.data_processing
         model_name = self.params.model_params.model_name
+        saved_tokenizer_path = Path(os.path.join(config.saved_tokenizer_dir, model_name, "tokenizer"))
+
 
         create_directories([config.processed_data_dir, config.split_data_dir])
 
@@ -52,6 +54,7 @@ class ConfigurationManager:
             train_data_size= params.train_data_size,
             test_data_size= params.test_data_size,
             val_data_size= params.val_data_size,
+            saved_tokenizer_path= saved_tokenizer_path 
 
         )
 
