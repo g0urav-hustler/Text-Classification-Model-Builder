@@ -16,6 +16,7 @@ class DataProcessingPipeline:
 
         data_processing.get_processed_data()
         data_processing.get_split_data()
+        data_processing.save_tokenizer()
 
 
 if __name__ == '__main__':
