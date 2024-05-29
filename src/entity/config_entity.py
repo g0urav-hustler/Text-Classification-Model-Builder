@@ -21,6 +21,7 @@ class DataProcessingConfig:
     train_data_size: float
     test_data_size: float
     val_data_size: float
+    saved_tokenizer_path: Path
 
 @dataclass(frozen= True)
 class TrainModelConfig:

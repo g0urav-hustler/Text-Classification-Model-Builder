@@ -1,19 +1,18 @@
 data_processing:
-  text_col: text
   label_col: category
-  train_data_size: 0.7
-  val_data_size: 0.1
   test_data_size: 0.2
-
-
-num_labels: 5
-labels : []
-
+  text_col: text
+  train_data_size: 0.5
+  val_data_size: 0.3
+labels:
+- tech
+- business
+- sport
+- entertainment
+- politics
 model_params:
-  model_name: bert-base-uncased
-  epochs : 5
+  epochs: 8
+  model_name: bert-base-cased
   train_batch_size: 4
   val_batch_size: 4
-
-
-
+num_labels: 5
