@@ -73,7 +73,8 @@ class ConfigurationManager:
         train_model_config = TrainModelConfig(
             train_data_path= config.train_data_path,
             val_data_path= config.val_data_path,
-            save_model_dir= config.saved_model_dir,
+            save_model_path= model_path,
+            output_dir = config.output_dir,
 
             model_name = params.model_name,
             num_labels = num_labels,
