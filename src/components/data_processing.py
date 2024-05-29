@@ -79,4 +79,8 @@ class DataProcessing:
         #save test data
         save_json(Path(join_path(self.config.split_data_dir, "test_data.json")), test_data)
 
+    def save_tokenizer(self):
+        tokenizer = AutoTokenizer.from_pretrained(self.config.model_name)
+        tokenizer.save_pretrained(self.config.saved_tokenizer_path)
+
 
