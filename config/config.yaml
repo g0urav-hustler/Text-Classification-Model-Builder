@@ -8,6 +8,7 @@ data_processing:
   raw_data_dir: artifacts/raw_data
   processed_data_dir: artifacts/processed_data
   split_data_dir: artifacts/split_data
+  save_tokenizer: artifacts/models/
 
 train_model:
   train_data_path: artifacts/split_data/
