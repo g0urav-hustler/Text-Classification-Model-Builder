@@ -65,6 +65,8 @@ class ConfigurationManager:
         num_labels = self.params.num_labels
         config = self.config.train_model
         params = self.params.model_params
+        model_path = Path(os.path.join(config.saved_model_dir, params.model_name ,"model"))
+        
         
         create_directories([config.saved_model_dir])
 

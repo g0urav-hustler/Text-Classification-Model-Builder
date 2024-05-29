@@ -28,6 +28,7 @@ class TrainModelConfig:
     train_data_path: Path 
     val_data_path: Path
     save_model_dir: Path
+    output_dir: Path
     
     model_name : str
     num_labels : int
