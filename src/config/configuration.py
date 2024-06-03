@@ -3,7 +3,8 @@ from src.constants import *
 from src.utils.common import read_yaml, create_directories
 from src.entity.config_entity import (DataIngestionConfig,
                                       DataProcessingConfig,
-                                      TrainModelConfig)
+                                      TrainModelConfig,
+                                      EvaluateModelConfig)
 
 
 class ConfigurationManager:
@@ -84,3 +85,16 @@ class ConfigurationManager:
         )
 
         return train_model_config
+    
+    def get_evaluate_model_config(self) -> EvaluateModelConfig:
+
+        config = self.config.evaluate_model
+        params = self.params.model_params
+        model_path = Path(os.path.join(config.saved_model_dir, params.model_name ,"model"))
+        
+        evaluate_model_config = EvaluateModelConfig(
+            test_data_path =Path(config.test_data_path),
+            pretrained_model_path = model_path
+        )
+
+        return evaluate_model_config
