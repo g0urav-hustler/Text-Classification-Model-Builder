@@ -35,3 +35,8 @@ class TrainModelConfig:
     epochs : int
     train_batch_size : int
     val_batch_size : int
+
+@dataclass(frozen= True)
+class EvaluateModelConfig:
+    test_data_path: Path 
+    pretrained_model_path : Path
