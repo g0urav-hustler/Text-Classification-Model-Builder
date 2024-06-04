@@ -6,15 +6,19 @@ import yaml
 import pandas as pd
 from transformers import AutoTokenizer
 from transformers import AutoModelForSequenceClassification
-from src.pipeline.stage_01_data_ingestion import DataIngestionPipeline
-from src.pipeline.stage_02_data_processing import DataProcessingPipeline
-from src.pipeline.stage_03_train_model import TrainModelPipeline
-
+from src.config.configuration import ConfigurationManager
+from src.components.data_ingestion import DataIngestion
+from src.components.data_processing import DataProcessing
+from src.components.train_model import TrainModel
+from src.components.evaluate_model import EvaluateModel
+from src.utils.common import read_yaml
+from pathlib import Path
 
 
 @st.cache_resource(show_spinner="Loading model tokenizer...")
-def load_tokenizer( tokenizer_path):
-    tokenizer = AutoTokenizer.from_pretrained(model_name= tokenizer_path,)
+def load_tokenizer(tokenizer_path):
+    print("Tokenizer path == ", tokenizer_path)
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
     return tokenizer
 
 
@@ -28,7 +32,6 @@ def compressing_model(model_path, zip_file_name):
     shutil.make_archive(zip_file_name, "zip", model_path)
 
 model_name = None
-    
 model_result = None
 
 # page config
@@ -112,7 +115,7 @@ if uploaded_file is not None:
         labels = list(df[label_column].unique())
         labels.sort()
         num_labels = df[label_column].nunique()
-
+         
         params_data = {
         "data_processing":
             {
@@ -128,7 +131,7 @@ if uploaded_file is not None:
             "num_labels": num_labels,
             "labels": labels,
 
-        "model_params":
+           "model_params":
             {
                 "model_name": model_name,
                 "epochs": no_of_epochs,
@@ -137,6 +140,8 @@ if uploaded_file is not None:
             }
 
         }
+
+        print("After puting ", params_data)
 
         folder = 'web_files'
         os.makedirs(folder, exist_ok=True)
@@ -153,45 +158,49 @@ if uploaded_file is not None:
             train_button = st.button("Train The Model")
         if train_button and not submitted:
             with st.status("Training Status", expanded=True) as status:
+                config = ConfigurationManager()
                 st.write("Data Loading Stage")
-                obj = DataIngestionPipeline()
-                obj.main()
-                time.sleep(3)
+                data_ingestion_process = DataIngestion(config.get_data_ingestion_config())
+                data_ingestion_process.get_raw_data()
                 st.write("Data Processing Stage")
-                obj = DataProcessingPipeline()
-                obj.main()
-                time.sleep(2)
+                data_processing_process = DataProcessing(config.get_data_processing_config())
+                data_processing_process.get_processed_data()
+                data_processing_process.get_split_data()
+                data_processing_process.save_tokenizer()
                 st.write("Model Training Stage")
-                source = "/home/gourav/ML/Text_Classification_Model_Builder/logs/model"
-                target = f"/home/gourav/ML/Text_Classification_Model_Builder/artifacts/models/{model_name}/model"
-                shutil.copytree(source, target, dirs_exist_ok= True)
-                model_result = {}
-                time.sleep(5)
-
+                model_training_process = TrainModel(config.get_train_model_config())
+                model_training_process.train_model()
+                st.write("Model Evaluation Stage")
+                model_evaluation_process = EvaluateModel(config.get_evaluate_model_config())
+                model_result = model_evaluation_process.get_model_evaluation()
+                
                 status.update(label="Model Trained Succesfully", state="complete", expanded=False)
  
             st.success('Done!')
 
 
     if os.path.isdir(f"./artifacts/models/{model_name}/model"):
-        print("into if statement")
         if model_result != None:
 
             result_col1, result_col2 = st.columns(2)
                 
             with result_col1:
                 st.write("Model Parameters")
-                # st.write(params_data["model_params"])
+                params_data = read_yaml(Path("params.yaml"))
+                print("last putting === ", params_data)
+                st.write(params_data["model_params"])
 
             with result_col2:
-                
+                st.write("Model Result")
                 st.write(model_result)
                     
-
         st.write("Try Trained Model Output")
 
-        pretrained_tokenizer = load_tokenizer(os.path.join("./artifacts","models",model_name, "tokenizer"))
-        # pretrained_model = load_model(os.path.join("artifacts","models",model_name, "model"))
+        tokenizer_path = os.path.join("./artifacts","models",model_name, "tokenizer")
+        model_path = os.path.join("./artifacts","models",model_name, "model")
+
+        pretrained_tokenizer = load_tokenizer(tokenizer_path)
+        pretrained_model = load_model(model_path)
 
         input_text = st.text_input("Try any sentence.. ",None, placeholder= "Write text here..")
         if input_text:
@@ -200,22 +209,21 @@ if uploaded_file is not None:
                              is_split_into_words=False,
                              return_tensors='pt')
             
-            # outputs = pretrained_model(tokenized_text["input_ids"])
-            # predicted_label = labels[outputs.logits.argmax(-1)]
+            outputs = pretrained_model(tokenized_text["input_ids"])
+            predicted_label = labels[outputs.logits.argmax(-1)]
 
             st.write("Prediction")
-            st.write(tokenized_text.keys())
-            
-            # st.write("The prediction is .", predicted_label)
+           
+            st.write("The prediction is", predicted_label)
 
 
-        # with open(f"{model_name}.zip", "rb") as fp:
-        #     btn = st.download_button(
-        #         label="Download Trained Model",
-        #         data=fp,
-        #         file_name=f"{model_name}.zip",
-        #         mime="application/octet-stream"
-        #         )
+        with open(f"{model_name}.zip", "rb") as fp:
+            btn = st.download_button(
+                label="Download Trained Model",
+                data=fp,
+                file_name=f"{model_name}.zip",
+                mime="application/octet-stream"
+                )
             
 footer = """<style>.footer {position: fixed;left: 0;bottom: 0;width: 100%;background-color: #000;color: white;text-align: center;}
 </style><div class='footer'><p>Made By Gourav Chouhan</p></div>"""
